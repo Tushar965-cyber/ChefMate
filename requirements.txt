@@ -1,0 +1,5 @@
+# ChefMate Dependencies
+# Core application uses standard library
+# For training/dataset processing:
+# pandas
+# scikit-learn
