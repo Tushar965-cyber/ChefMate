@@ -44,6 +44,14 @@ export function RecipeImage({
   const [currentSrc, setCurrentSrc] = useState<string>(src || fallback);
   const [hasFailedTwice, setHasFailedTwice] = useState(false);
 
+  // Sync state whenever src or alt changes (e.g. clicking 'Show Another')
+  const [prevProps, setPrevProps] = useState({ src, alt });
+  if (prevProps.src !== src || prevProps.alt !== alt) {
+    setPrevProps({ src, alt });
+    setCurrentSrc(src || fallback);
+    setHasFailedTwice(false);
+  }
+
   const handleError = () => {
     if (currentSrc !== fallback) {
       // Step 1 fallback: Try thematic food photography

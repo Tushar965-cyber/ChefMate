@@ -44,7 +44,10 @@ export function PreferencesScreen({
     },
   ];
 
-  const stripEmoji = (label: string) => label.split(" ")[0];
+  const stripEmoji = (label: string) => {
+    const lastSpace = label.lastIndexOf(' ');
+    return lastSpace !== -1 ? label.substring(0, lastSpace) : label;
+  };
   const isSelected = (key: keyof typeof sel, opt: string) => sel[key] === stripEmoji(opt);
 
   return (

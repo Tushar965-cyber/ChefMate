@@ -143,17 +143,18 @@ class ChefMateAPIHandler(BaseHTTPRequestHandler):
 
 
 def run_server(port: int = 8000):
-    server_address = ("127.0.0.1", port)
+    host = "0.0.0.0"
+    server_address = (host, port)
     httpd = HTTPServer(server_address, ChefMateAPIHandler)
     print("=" * 60)
     print(f"[ChefMate] Python Backend Server is RUNNING")
-    print(f"[Network]  Listening on: http://127.0.0.1:{port}")
+    print(f"[Network]  Listening on: http://{host}:{port}")
     print(f"[Database] Recipes Loaded: {len(recipes_db)}")
     print(f"Endpoints:")
-    print(f"  GET  http://127.0.0.1:{port}/api/v1/health")
-    print(f"  GET  http://127.0.0.1:{port}/api/v1/recipes")
-    print(f"  POST http://127.0.0.1:{port}/api/v1/recommend")
-    print(f"  POST http://127.0.0.1:{port}/api/v1/chat")
+    print(f"  GET  http://{host}:{port}/api/v1/health")
+    print(f"  GET  http://{host}:{port}/api/v1/recipes")
+    print(f"  POST http://{host}:{port}/api/v1/recommend")
+    print(f"  POST http://{host}:{port}/api/v1/chat")
     print("=" * 60)
     try:
         httpd.serve_forever()
@@ -163,7 +164,8 @@ def run_server(port: int = 8000):
 
 
 if __name__ == "__main__":
-    port = 8000
+    port = int(os.environ.get("PORT", 8000))
     if len(sys.argv) > 1 and sys.argv[1].isdigit():
         port = int(sys.argv[1])
     run_server(port)
+

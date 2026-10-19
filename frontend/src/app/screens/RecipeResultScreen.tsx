@@ -37,6 +37,7 @@ export function RecipeResultScreen({
           <div className="bg-card rounded-2xl shadow-md overflow-hidden border border-border">
             <div className="relative">
               <RecipeImage
+                key={r.id || r.name}
                 src={image}
                 alt={r.name}
                 cuisine={r.cuisine}
