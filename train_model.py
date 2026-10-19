@@ -16,8 +16,10 @@ import re
 from collections import Counter, defaultdict
 from typing import Dict, List, Tuple, Any
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "training_data.json")
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "intent_model.pkl")
+_DIR = os.path.dirname(__file__)
+DATA_PATH = os.path.join(_DIR, "data", "training_data.json") if os.path.exists(os.path.join(_DIR, "data", "training_data.json")) else os.path.join(_DIR, "training_data.json")
+MODEL_PATH = os.path.join(_DIR, "intent_model.pkl")
+
 
 
 def tokenize(text: str) -> List[str]:

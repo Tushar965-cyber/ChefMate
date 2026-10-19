@@ -36,12 +36,18 @@ export function AppNavbar({
           <span className="font-black text-foreground text-[15px] font-display">ChefMate</span>
         </button>
 
-        {/* Center Badges: Local + Visitor Count */}
+        {/* Center Badges: Render Cloud Backend + Visitor Count */}
         <div className="flex items-center gap-2">
-          <div className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="font-medium text-emerald-800">100% Local • Zero API</span>
-          </div>
+          <a
+            href="https://chefmate-rmwq.onrender.com/api/v1/health"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Connected to Render Python Backend API"
+            className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs hover:bg-emerald-500/20 transition-colors"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-semibold text-emerald-800">Render API Live (500 Recipes)</span>
+          </a>
 
           <VisitorBadge className="hidden sm:inline-flex" />
         </div>

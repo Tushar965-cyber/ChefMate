@@ -6,6 +6,7 @@ import {
   findMatchingRecipes,
   type RecipeMatchResult,
 } from "@/app/services/recipeEngine";
+import { getBackendRecommendations } from "@/app/services/apiClient";
 import {
   WelcomeScreen,
   ChatScreen,
@@ -90,16 +91,40 @@ export default function App() {
     else if (updatedFilters.cookTime?.includes("30")) maxM = 30;
     else if (updatedFilters.cookTime?.includes("hour")) maxM = 60;
 
-    const matches = findMatchingRecipes(ings, {
-      mealType: updatedFilters.mealType,
+    // First attempt to query live Render backend recommendation API
+    getBackendRecommendations(ings, {
+      meal_type: updatedFilters.mealType,
       cuisine: updatedFilters.cuisine,
-      dietary: updatedFilters.dietary,
-      maxMinutes: maxM,
+      diet_type: updatedFilters.dietary,
+      max_time: maxM,
+    }).then((apiRes) => {
+      if (apiRes && apiRes.success && apiRes.results && apiRes.results.length > 0) {
+        setSearchResults(apiRes.results);
+        setCurrentIndex(0);
+        setScreen("recipe-result");
+      } else {
+        // Fallback to local client-side matching engine
+        const matches = findMatchingRecipes(ings, {
+          mealType: updatedFilters.mealType,
+          cuisine: updatedFilters.cuisine,
+          dietary: updatedFilters.dietary,
+          maxMinutes: maxM,
+        });
+        setSearchResults(matches);
+        setCurrentIndex(0);
+        setScreen(matches.length > 0 ? "recipe-result" : "no-result");
+      }
+    }).catch(() => {
+      const matches = findMatchingRecipes(ings, {
+        mealType: updatedFilters.mealType,
+        cuisine: updatedFilters.cuisine,
+        dietary: updatedFilters.dietary,
+        maxMinutes: maxM,
+      });
+      setSearchResults(matches);
+      setCurrentIndex(0);
+      setScreen(matches.length > 0 ? "recipe-result" : "no-result");
     });
-
-    setSearchResults(matches);
-    setCurrentIndex(0);
-    setScreen(matches.length > 0 ? "recipe-result" : "no-result");
   };
 
   const handlePreferencesApply = (prefs: {
@@ -114,16 +139,39 @@ export default function App() {
     else if (prefs.cookTime.includes("30")) maxM = 30;
     else if (prefs.cookTime.includes("hour")) maxM = 60;
 
-    const matches = findMatchingRecipes(activeIngredients, {
-      mealType: prefs.mealType || undefined,
+    // Query live Render backend with preferences
+    getBackendRecommendations(activeIngredients, {
+      meal_type: prefs.mealType || undefined,
       cuisine: prefs.cuisine || undefined,
-      dietary: prefs.dietary || undefined,
-      maxMinutes: maxM,
+      diet_type: prefs.dietary || undefined,
+      max_time: maxM,
+    }).then((apiRes) => {
+      if (apiRes && apiRes.success && apiRes.results && apiRes.results.length > 0) {
+        setSearchResults(apiRes.results);
+        setCurrentIndex(0);
+        setScreen("recipe-result");
+      } else {
+        const matches = findMatchingRecipes(activeIngredients, {
+          mealType: prefs.mealType || undefined,
+          cuisine: prefs.cuisine || undefined,
+          dietary: prefs.dietary || undefined,
+          maxMinutes: maxM,
+        });
+        setSearchResults(matches);
+        setCurrentIndex(0);
+        setScreen(matches.length > 0 ? "recipe-result" : "no-result");
+      }
+    }).catch(() => {
+      const matches = findMatchingRecipes(activeIngredients, {
+        mealType: prefs.mealType || undefined,
+        cuisine: prefs.cuisine || undefined,
+        dietary: prefs.dietary || undefined,
+        maxMinutes: maxM,
+      });
+      setSearchResults(matches);
+      setCurrentIndex(0);
+      setScreen(matches.length > 0 ? "recipe-result" : "no-result");
     });
-
-    setSearchResults(matches);
-    setCurrentIndex(0);
-    setScreen(matches.length > 0 ? "recipe-result" : "no-result");
   };
 
   const handleShowAnother = () => {
