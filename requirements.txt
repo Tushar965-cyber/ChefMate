@@ -1,5 +1,4 @@
 # ChefMate Dependencies
-# Core application uses standard library
-# For training/dataset processing:
-# pandas
-# scikit-learn
+# Core application uses standard library + scikit-learn for intent classification
+scikit-learn>=1.3.0
+pandas>=2.0.0

@@ -121,11 +121,33 @@ class ChefMateBot:
         elif intent == "exit":
             return "ChefMate: Happy cooking! Hope to see you again soon. Goodbye! 👋"
 
-        elif intent in ("provide_ingredients", "ask_recipe") or "," in text:
-            # Check if ingredients were provided
+        elif intent == "ask_recipe":
+            # If ingredients exist or provided in text
             extracted_ings = clean_ingredients(text)
-            # Remove command words from extracted ingredients
-            ignore = {"have", "got", "kitchen", "today", "want", "cook", "recipe", "recommend", "dinner", "lunch", "breakfast"}
+            ignore = {"have", "got", "kitchen", "today", "want", "cook", "recipe", "recommend", "dinner", "lunch", "breakfast", "what", "should", "make", "for", "can", "give", "suggest", "find", "food", "eat", "ideas"}
+            cleaned = [i for i in extracted_ings if i not in ignore]
+            if cleaned:
+                self.user_ingredients = cleaned
+
+            if not self.user_ingredients:
+                # Provide top recommended recipes
+                results = self.run_search()
+                if results:
+                    return f"ChefMate: Here are popular dishes you can make:\n\n" + self.format_search_results(results)
+                return (
+                    "ChefMate: What ingredients do you have on hand? "
+                    "Tell me what you have (e.g., 'I have chicken and garlic') or pick your preferences!"
+                )
+            results = self.run_search()
+            if not results:
+                return f"ChefMate: I searched for recipes with {', '.join(self.user_ingredients)}, but couldn't find any. Try adding more ingredients!"
+            return self.format_search_results(results)
+
+        elif intent == "provide_ingredients" or "," in text:
+            # Clean ingredients from conversational phrasing
+            cleaned_text = re.sub(r"^(i\s+have|i\s+got|available\s+ingredients?|in\s+my\s+kitchen|using|my\s+ingredients\s+are|we\s+have)\s*[:\-]?\s*", "", text, flags=re.IGNORECASE)
+            extracted_ings = clean_ingredients(cleaned_text)
+            ignore = {"have", "got", "kitchen", "today", "want", "cook", "recipe", "recommend", "dinner", "lunch", "breakfast", "fridge", "home", "available", "ingredients", "using"}
             cleaned = [i for i in extracted_ings if i not in ignore]
 
             if cleaned:

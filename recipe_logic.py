@@ -71,7 +71,10 @@ def clean_ingredients(raw_text: str) -> List[str]:
 
     # If user used commas, split by comma; otherwise split on 'and'
     if "," in raw_text:
-        parts = raw_text.split(",")
+        raw_parts = raw_text.split(",")
+        parts = []
+        for p in raw_parts:
+            parts.extend(re.split(r"\band\b", p, flags=re.IGNORECASE))
     elif " and " in raw_text.lower():
         parts = re.split(r"\band\b", raw_text, flags=re.IGNORECASE)
     else:
